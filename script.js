@@ -7,9 +7,13 @@ let minhaListaDeItens = []
 
 //Função para Pegar o valor digitado e adicionar
 function adicionarTarefas(){
-    minhaListaDeItens.push(input.value)
+    minhaListaDeItens.push({
+      tarefa: input.value,
+      tarefaConcluida: false
 
+    })
 
+     input.value=''
     mostrarTarefa()
 }
 
@@ -17,19 +21,54 @@ function adicionarTarefas(){
 function mostrarTarefa(){
       let novaLista = ''
 
-      minhaListaDeItens.forEach(tarefa => {
+      minhaListaDeItens.forEach((item, index) => {
 
         novaLista = novaLista + ` 
-                      <li class="task">
-                       <img src="./img/checkmark.png" alt="checkmark">
-                         <p> ${tarefa}</p>
-                       <img src="./img/trash.png" alt="lixeira">
+                      <li class="task ${item.tarefaConcluida && "done"}">
+                       <img src="./img/checkmark.png" alt="checkmark" onclick="concluirTarefa(${index})">
+                         <p> ${item.tarefa}</p>
+                       <img src="./img/trash.png" alt="lixeira" onclick="deletarTarefas(${index})">
                       </li>
                       `
+                      
       })
-      listaCompleta.innerHTML  = novaLista  
+    
+      listaCompleta.innerHTML  = novaLista 
+      
+       localStorage.setItem('lista', JSON.stringify(minhaListaDeItens))
+
 
 }
+
+function concluirTarefa(index){
+ minhaListaDeItens[index].tarefaConcluida = 
+ !minhaListaDeItens[index].tarefaConcluida
+
+  mostrarTarefa()
+}
+
+
+
+
+
+function deletarTarefas(index){
+
+  minhaListaDeItens.splice(index, 1)
+  
+  mostrarTarefa()
+}
+
+function recarregarTarefas(){
+   const tarefasDoLocalStorage = localStorage.getItem('lista')
+    
+   if(tarefasDoLocalStorage){
+   minhaListaDeItens = JSON.parse(tarefasDoLocalStorage)
+   //console.log(tarefasDoLocalStorage)
+   }
+   
+  mostrarTarefa()
+}
+
 
 
 button.addEventListener('click', adicionarTarefas)
